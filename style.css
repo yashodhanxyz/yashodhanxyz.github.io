@@ -52,3 +52,8 @@ blockquote.twitter-tweet a:focus {
 p {
     max-width: 500px;
 }
+
+section .twitter-block {
+    background: #1d9bf0;
+    width: 100%;
+}
