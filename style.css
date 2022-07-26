@@ -12,7 +12,7 @@ body {
 
 section {
     margin: 0 auto;
-    text-align: -webkit-center;
+    /* text-align: -webkit-center; */
 }
 
 blockquote.twitter-tweet {
