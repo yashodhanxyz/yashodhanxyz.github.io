@@ -1,59 +1,67 @@
-/* * {
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f8f8f8;
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
-} */
-
-body {
-    font-family: "Helvetica Neue", Roboto, "Segoe UI", Calibri, sans-serif;
-    background-color: #F7F6F3;
-    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
-section {
-    margin: 0 auto;
-    /* text-align: -webkit-center; */
+.container {
+    background-color: white;
+    border-radius: 24px;
+    padding: 48px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
-blockquote.twitter-tweet {
-    display: inline-block;
-    font-family: "Helvetica Neue", Roboto, "Segoe UI", Calibri, sans-serif;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 16px;
-    border-color: #eee #ddd #bbb;
-    border-radius: 5px;
-    border-style: solid;
-    border-width: 1px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    margin: 10px 5px;
-    padding: 0 16px 16px 16px;
-    max-width: 468px;
+.content {
+    max-width: 100%;
 }
 
-blockquote.twitter-tweet p {
-    font-size: 14px;
+.logo {
+    width: 24px;
+    height: 24px;
+    background-color: #ff6b00;
+    border-radius: 50% 0 0 0;
+    margin-bottom: 48px;
+}
+
+h1 {
+    font-size: 18px;
+    margin-bottom: 48px;
     font-weight: normal;
-    line-height: 18px;
-}
-
-blockquote.twitter-tweet a {
-    color: inherit;
-    font-weight: normal;
-    text-decoration: none;
-    outline: 0 none;
-}
-
-blockquote.twitter-tweet a:hover,
-blockquote.twitter-tweet a:focus {
-    text-decoration: underline;
 }
 
 p {
-    max-width: 500px;
+    margin-bottom: 24px;
+    line-height: 1.5;
 }
 
-section .twitter-block {
-    background: #1d9bf0;
-    width: 100%;
+.link {
+    color: #ff6b00;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 24px;
+        margin: 16px;
+    }
+
+    h1 {
+        font-size: 16px;
+    }
+
+    p {
+        font-size: 14px;
+    }
 }
