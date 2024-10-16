@@ -22,18 +22,39 @@ body {
 .content {
     max-width: 100%;
 }
-
-.logo {
+.shapes {
+    display: flex;
+    justify-content: normal;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.shape {
     width: 24px;
     height: 24px;
-    background-color: #ff6b00;
-    border-radius: 50% 0 0 0;
+    margin: 0 10px 0 0;
+    transition: background-color 0.3s ease;
     margin-bottom: 48px;
+}
+.circle {
+    border-radius: 50%;
+}
+.square {
+    border-radius: 0;
+}
+.triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+.animated-link {
+    text-decoration: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
 }
 
 h1 {
     font-size: 18px;
-    margin-bottom: 48px;
+    margin-bottom: 32px;
     font-weight: normal;
 }
 
