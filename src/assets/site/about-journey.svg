@@ -1,0 +1,17 @@
+<svg width="896" height="512" viewBox="0 0 896 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="896" height="512" rx="36" fill="#0f172a"/>
+  <path d="M120 376C152 280 256 160 392 160C528 160 560 368 728 352" stroke="url(#paint0_linear)" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="240" cy="256" r="18" fill="#38bdf8"/>
+  <circle cx="392" cy="184" r="18" fill="#60a5fa"/>
+  <circle cx="532" cy="308" r="18" fill="#818cf8"/>
+  <circle cx="684" cy="344" r="18" fill="#c084fc"/>
+  <text x="120" y="112" fill="#e2e8f0" font-family="'Inter', 'Segoe UI', sans-serif" font-size="36" font-weight="600">Tracing the path from curiosity to craft</text>
+  <text x="120" y="160" fill="#94a3b8" font-family="'Inter', 'Segoe UI', sans-serif" font-size="20">A visual of the experiments, teams, and shipped products that shaped my practice.</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="120" y1="160" x2="728" y2="376" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38bdf8"/>
+      <stop offset="0.5" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#c084fc"/>
+    </linearGradient>
+  </defs>
+</svg>

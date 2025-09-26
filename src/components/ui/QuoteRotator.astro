@@ -1,0 +1,156 @@
+---
+export interface QuoteItem {
+  id: string;
+  quote: string;
+  author: string;
+  source?: string | null;
+}
+
+interface Props {
+  items: QuoteItem[];
+}
+
+const { items } = Astro.props;
+const hasMultiple = items.length > 1;
+---
+<section
+  class="rotator"
+  data-quote-rotator
+  aria-live="polite"
+  aria-label="Testimonials about Yashodhan"
+>
+  <div class="quote-viewport">
+    {items.map((item, index) => (
+      <figure
+        id={`quote-${index}`}
+        role="tabpanel"
+        class:list={['quote', index === 0 ? 'quote--active' : undefined]}
+        data-quote-index={index}
+        data-active={index === 0}
+        aria-hidden={index === 0 ? 'false' : 'true'}
+        tabIndex={index === 0 ? 0 : -1}
+      >
+        <blockquote>“{item.quote}”</blockquote>
+        <figcaption>
+          <span class="quote__author">{item.author}</span>
+          {item.source && <span class="quote__source"> · {item.source}</span>}
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+  {hasMultiple && (
+    <div class="quote-controls">
+      <button type="button" data-role="prev" aria-label="Show previous quote">
+        ‹
+      </button>
+      <div class="quote-dots" role="tablist" aria-label="Quotes">
+        {items.map((_, index) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-controls={`quote-${index}`}
+            data-role="dot"
+            data-quote-target={index}
+          >
+            <span class="visually-hidden">Quote {index + 1}</span>
+          </button>
+        ))}
+      </div>
+      <button type="button" data-role="next" aria-label="Show next quote">
+        ›
+      </button>
+    </div>
+  )}
+  {hasMultiple && <script type="module" src="/scripts/quote-rotator.js" defer />}
+</section>
+
+<style>
+  .rotator {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
+  .quote-viewport {
+    position: relative;
+    min-height: 150px;
+  }
+
+  .quote {
+    margin: 0;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .quote--active {
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+  }
+
+  .quote blockquote {
+    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .quote__author {
+    font-weight: 600;
+  }
+
+  .quote-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .quote-controls button {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: inherit;
+    border-radius: 999px;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 1.4rem;
+    transition: background var(--transition-speed) ease;
+  }
+
+  .quote-controls button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .quote-dots {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+
+  .quote-dots button {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-border);
+    padding: 0;
+  }
+
+  .quote-dots button[aria-selected='true'] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+</style>

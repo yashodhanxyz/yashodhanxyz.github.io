@@ -1,0 +1,226 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { WorkEntry } from '../../data/work';
+import { workEntries } from '../../data/work';
+import { projectEntries } from '../../data/projects';
+import { getCollection } from 'astro:content';
+import { SITE, absoluteUrl, createCreativeWorkJsonLd } from '../../utils/site';
+
+export function getStaticPaths() {
+  return workEntries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: WorkEntry;
+}
+
+const { entry } = Astro.props as Props;
+const pageTitle = `${entry.title} | Work with Yashodhan`;
+const pageDescription = entry.metaDescription || entry.summary;
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? SITE.url).toString();
+const ogImage = entry.ogImage ?? SITE.defaultImage;
+const structuredData = [
+  createCreativeWorkJsonLd({
+    title: entry.title,
+    description: entry.summary,
+    url: pageUrl,
+    image: absoluteUrl(ogImage),
+  }),
+];
+
+const relatedPosts = await getCollection('blog', ({ slug }) => entry.relatedBlogSlugs?.includes(slug));
+relatedPosts.sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const relatedProjects = (entry.relatedProjectSlugs ?? [])
+  .map((slug) => projectEntries.find((project) => project.slug === slug))
+  .filter(Boolean);
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  ogImage={ogImage}
+  ogType="article"
+  structuredData={structuredData}
+>
+
+  <article class="case" aria-labelledby="case-heading">
+    <header class="case__hero">
+      <p class="case__eyebrow">Case Study</p>
+      <h1 id="case-heading">{entry.title}</h1>
+      <p class="case__role">{entry.role} · {entry.period}</p>
+      <p class="case__summary">{entry.summary}</p>
+    </header>
+
+    <section class="case__section" aria-labelledby="problem-heading">
+      <h2 id="problem-heading">Problem</h2>
+      <p>{entry.problem}</p>
+    </section>
+
+    <section class="case__section" aria-labelledby="approach-heading">
+      <h2 id="approach-heading">Approach</h2>
+      <ul>
+        {entry.approach.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="case__section" aria-labelledby="outcome-heading">
+      <h2 id="outcome-heading">Outcome</h2>
+      <p>{entry.outcome}</p>
+      {entry.metrics && entry.metrics.length > 0 && (
+        <dl class="case__metrics">
+          {entry.metrics.map((metric) => (
+            <div class="metric">
+              <dt>{metric.label}</dt>
+              <dd>
+                <span class="metric__value">{metric.value}</span>
+                {metric.description && <span class="metric__description">{metric.description}</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </section>
+
+    {relatedProjects.length > 0 && (
+      <section class="case__section" aria-labelledby="related-projects-heading">
+        <h2 id="related-projects-heading">Related Projects</h2>
+        <ul class="related-list">
+          {relatedProjects.map((project) => (
+            <li>
+              <article class="related-card">
+                <h3>{project.title}</h3>
+                <p>{project.tagline}</p>
+                <a href={`/projects/${project.slug}`}>View project</a>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {relatedPosts.length > 0 && (
+      <section class="case__section" aria-labelledby="related-writing-heading">
+        <h2 id="related-writing-heading">Related writing</h2>
+        <ul class="related-list">
+          {relatedPosts.map((post) => (
+            <li>
+              <article class="related-card">
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+                <a href={`/blog/${post.slug}`}>Read post</a>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </article>
+
+  <style>
+    .case {
+      max-width: 78ch;
+      margin: 0 auto;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    .case__hero {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .case__eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.85rem;
+      color: var(--color-muted);
+    }
+
+    .case__role {
+      margin: 0;
+      color: var(--color-muted);
+      font-weight: 600;
+    }
+
+    .case__summary {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--color-muted);
+    }
+
+    .case__section h2 {
+      margin-top: 0;
+      font-size: 1.4rem;
+    }
+
+    .case__section ul {
+      padding-left: 1.2rem;
+      margin: 0;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .case__section p {
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    .case__metrics {
+      margin-top: 1.5rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .metric dt {
+      font-weight: 600;
+    }
+
+    .metric__value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .metric__description {
+      color: var(--color-muted);
+    }
+
+    .related-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .related-card {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      padding: 1.6rem;
+      background: var(--color-surface);
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .related-card h3 {
+      margin: 0;
+    }
+
+    .related-card a {
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    .related-card a:hover,
+    .related-card a:focus-visible {
+      text-decoration: underline;
+    }
+  </style>
+</BaseLayout>

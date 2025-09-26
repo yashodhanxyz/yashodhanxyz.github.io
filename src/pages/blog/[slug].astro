@@ -1,0 +1,272 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentImage from '../../components/mdx/ContentImage.astro';
+import Callout from '../../components/mdx/Callout.astro';
+import { findRelatedPosts, getPublishedPosts, getReadTimeMinutes } from '../../utils/blog';
+import { SITE, absoluteUrl, createArticleJsonLd } from '../../utils/site';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { slug: post.slug },
+  }));
+}
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props as Props;
+const posts = await getPublishedPosts();
+const index = posts.findIndex((post) => post.slug === slug);
+
+if (index === -1) {
+  throw new Error(`Blog post not found for slug: ${slug}`);
+}
+
+const entry = posts[index];
+const { Content } = await entry.render();
+const readTime = getReadTimeMinutes(entry.body);
+const related = findRelatedPosts(entry, posts, 3);
+const older = posts[index + 1] ?? null;
+const newer = posts[index - 1] ?? null;
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+
+const title = entry.data.title;
+const description = entry.data.description;
+const heroImagePath = entry.data.heroImage?.src ?? SITE.defaultImage;
+const publishedDate = formatDate(entry.data.publishedAt);
+const updatedDate = entry.data.updatedAt ? formatDate(entry.data.updatedAt) : undefined;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? SITE.url).toString();
+const structuredData = [
+  createArticleJsonLd({
+    title,
+    description,
+    url: canonicalUrl,
+    image: absoluteUrl(heroImagePath),
+    datePublished: entry.data.publishedAt,
+    dateModified: entry.data.updatedAt,
+    keywords: entry.data.tags,
+  }),
+];
+---
+
+<BaseLayout
+  title={`${title} | Blog`}
+  description={description}
+  ogImage={heroImagePath}
+  ogType="article"
+  structuredData={structuredData}
+>
+
+  <article class="post" aria-labelledby="post-heading">
+    <header class="post__headline">
+      <p class="post__meta">
+        <time dateTime={entry.data.publishedAt.toISOString()}>{publishedDate}</time>
+        <span aria-hidden="true">•</span>
+        <span>{readTime} min read</span>
+      </p>
+      <h1 id="post-heading">{title}</h1>
+      {entry.data.updatedAt && (
+        <p class="post__meta post__meta--updated">Updated {updatedDate}</p>
+      )}
+      {entry.data.tldr && (
+        <aside class="post__tldr" aria-label="Summary">
+          <strong>TL;DR</strong>
+          <p>{entry.data.tldr}</p>
+        </aside>
+      )}
+      {entry.data.heroImage && (
+        <div class="post__hero">
+          <ContentImage src={entry.data.heroImage} alt={entry.data.title} />
+        </div>
+      )}
+    </header>
+
+    <div class="post__body">
+      <Content components={{ ContentImage, Callout }} />
+    </div>
+
+    {entry.data.tags.length > 0 && (
+      <ul class="post__tags" aria-label="Tags">
+        {entry.data.tags.map((tag) => (
+          <li>{tag}</li>
+        ))}
+      </ul>
+    )}
+
+    {related.length > 0 && (
+      <section class="related" aria-labelledby="related-heading">
+        <h2 id="related-heading">Related writing</h2>
+        <ul>
+          {related.map((post) => (
+            <li>
+              <article>
+                <h3>
+                  <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+                </h3>
+                <p>{post.data.description}</p>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <nav class="post-nav" aria-label="More posts">
+      {older ? (
+        <a class="post-nav__link" href={`/blog/${older.slug}`}>
+          <span class="post-nav__label">Older</span>
+          <span class="post-nav__title">{older.data.title}</span>
+        </a>
+      ) : <span />}
+      {newer ? (
+        <a class="post-nav__link" href={`/blog/${newer.slug}`}>
+          <span class="post-nav__label">Newer</span>
+          <span class="post-nav__title">{newer.data.title}</span>
+        </a>
+      ) : <span />}
+    </nav>
+  </article>
+
+  <style>
+    .post {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    .post__headline {
+      display: grid;
+      gap: 1.2rem;
+    }
+
+    .post__meta {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--color-muted);
+      display: inline-flex;
+      gap: 0.6rem;
+    }
+
+    .post__meta--updated {
+      font-style: italic;
+    }
+
+    .post__tldr {
+      border-radius: var(--radius-base);
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      background: rgba(37, 99, 235, 0.08);
+      padding: 1.2rem 1.4rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .post__tldr strong {
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    .post__hero {
+      margin-top: 1rem;
+    }
+
+    .post__body {
+      display: grid;
+      gap: 1.8rem;
+    }
+
+    .post__body :global(h2) {
+      margin-top: 2.4rem;
+    }
+
+    .post__body :global(p) {
+      line-height: 1.75;
+    }
+
+    .post__tags {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .post__tags li {
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--color-accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .related {
+      border-top: 1px solid var(--color-border);
+      padding-top: 2rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .related ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 1.2rem;
+    }
+
+    .related article {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .related a {
+      color: inherit;
+    }
+
+    .related a:hover,
+    .related a:focus-visible {
+      text-decoration: underline;
+    }
+
+    .post-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      border-top: 1px solid var(--color-border);
+      padding-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .post-nav__link {
+      display: grid;
+      gap: 0.4rem;
+      max-width: 320px;
+      color: inherit;
+    }
+
+    .post-nav__label {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.85rem;
+      color: var(--color-muted);
+    }
+
+    .post-nav__title {
+      font-weight: 600;
+      line-height: 1.4;
+    }
+  </style>
+</BaseLayout>

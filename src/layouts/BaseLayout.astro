@@ -1,0 +1,142 @@
+---
+import '../styles/global.css';
+import { SITE, absoluteUrl } from '../utils/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article' | 'profile' | 'creativework';
+  structuredData?: Array<Record<string, unknown>>;
+  noindex?: boolean;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  ogImage,
+  ogType = 'website',
+  structuredData = [],
+  noindex = false,
+} = Astro.props as Props;
+const currentPath = Astro.url.pathname;
+const siteUrl = (Astro.site ?? new URL(SITE.url)).toString();
+const canonicalUrl = new URL(Astro.url.pathname + Astro.url.search, siteUrl).toString();
+const resolvedOgImage = absoluteUrl(ogImage ?? SITE.defaultImage);
+
+const metaOgType = ogType === 'creativework' ? 'article' : ogType;
+const isProd = import.meta.env.PROD;
+
+const navLinks = [
+  { href: '/about', label: 'About' },
+  { href: '/work', label: 'Work' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/blog', label: 'Blog' },
+];
+
+const resolveAriaCurrent = (href: string) =>
+  currentPath === href || (href !== '/' && currentPath.startsWith(`${href}/`)) ? 'page' : undefined;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:type" content={metaOgType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    {structuredData.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+    {isProd && (
+      <Fragment>
+        <script defer data-domain="yashodhan.dev" src="https://plausible.io/js/script.js"></script>
+        <script defer type="module" src="/scripts/analytics-events.js"></script>
+      </Fragment>
+    )}
+    <slot name="head" />
+    <script>
+      const storedTheme = window.localStorage.getItem('color-scheme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const resolved = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.style.colorScheme = resolved;
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header>
+      <div class="site-shell">
+        <a class="brand" href="/" aria-label="Yashodhan home">
+          <span class="brand__mark" aria-hidden="true">Y</span>
+          <span>Yashodhan</span>
+          <slot name="logotype" />
+        </a>
+        <nav aria-label="Main navigation">
+          <ul>
+            {navLinks.map(({ href, label }) => (
+              <li>
+                <a href={href} aria-current={resolveAriaCurrent(href)}>{label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <button
+          class="theme-toggle"
+          type="button"
+          aria-label="Toggle color theme"
+          data-role="theme-toggle"
+        >
+          <span aria-hidden="true">🌓</span>
+          <span class="visually-hidden">Toggle dark mode</span>
+        </button>
+      </div>
+    </header>
+    <main id="main-content">
+      <slot />
+    </main>
+    <footer>
+      <div class="site-shell">
+        <small>© {new Date().getFullYear()} Yashodhan. All rights reserved.</small>
+        <div class="footer-social" aria-label="Social links">
+          <a href="mailto:hello@yashodhan.dev">Email</a>
+          <span aria-hidden="true">•</span>
+          <a href="https://github.com/yashodhanxyz" rel="me noopener" target="_blank">GitHub</a>
+          <span aria-hidden="true">•</span>
+          <a href="https://www.linkedin.com/in/yashodhan" rel="me noopener" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const toggleButton = document.querySelector('[data-role="theme-toggle"]');
+      const applyTheme = (theme) => {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        window.localStorage.setItem('color-scheme', theme);
+        if (toggleButton) {
+          toggleButton.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+        }
+      };
+
+      if (toggleButton) {
+        toggleButton.addEventListener('click', () => {
+          const current = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+          applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
+        const initialTheme = document.documentElement.dataset.theme || 'light';
+        toggleButton.setAttribute('aria-pressed', initialTheme === 'dark' ? 'true' : 'false');
+      }
+    </script>
+  </body>
+</html>

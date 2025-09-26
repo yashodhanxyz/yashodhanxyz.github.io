@@ -1,0 +1,10 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" rx="32" fill="#0B1120"/>
+  <rect x="220" y="200" width="840" height="360" rx="24" fill="#111C2F" stroke="#334155" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M260 260H920" stroke="#38BDF8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M260 320H960" stroke="#F97316" stroke-dasharray="12 16" stroke-width="6" stroke-linecap="round"/>
+  <path d="M260 380H880" stroke="#22D3EE" stroke-width="6" stroke-linecap="round"/>
+  <path d="M260 440H840" stroke="#A855F7" stroke-width="6" stroke-linecap="round"/>
+  <text x="220" y="160" fill="#E2E8F0" font-family="'Inter', 'Segoe UI', sans-serif" font-size="46" font-weight="600">Signal Kit weekly digest</text>
+  <text x="220" y="216" fill="#94A3B8" font-family="'Inter', 'Segoe UI', sans-serif" font-size="26">Raw interviews in, tagged insights out — ready for roadmap discussion.</text>
+</svg>

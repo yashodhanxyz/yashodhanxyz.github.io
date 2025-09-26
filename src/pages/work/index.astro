@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { workEntries } from '../../data/work';
+import { SITE, absoluteUrl } from '../../utils/site';
+
+const pageTitle = 'Yashodhan | Work';
+const description = 'Selected engagements and partnerships that shaped my product engineering practice.';
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? SITE.url).toString();
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Work',
+    url: pageUrl,
+    description,
+    mainEntity: workEntries.map((entry, index) => ({
+      '@type': 'CreativeWork',
+      name: entry.title,
+      description: entry.summary,
+      url: absoluteUrl(`/work/${entry.slug}`),
+      position: index + 1,
+    })),
+  },
+];
+---
+
+<BaseLayout title={pageTitle} description={description} structuredData={structuredData}>
+  <section class="work-intro" aria-labelledby="work-heading">
+    <h1 id="work-heading">Work</h1>
+    <p>
+      A snapshot of the teams and missions I&apos;ve partnered with recently. Each story dives into the problem, approach, and
+      measurable outcomes that followed.
+    </p>
+  </section>
+
+  <section aria-label="Work history" class="work-list">
+    <ul>
+      {workEntries.map((entry) => (
+        <li>
+          <article class="work-card">
+            <header>
+              <h2>
+                <a href={`/work/${entry.slug}`}>{entry.title}</a>
+              </h2>
+              <p class="work-card__meta">
+                <span>{entry.role}</span>
+                <span aria-hidden="true">•</span>
+                <span>{entry.period}</span>
+              </p>
+            </header>
+            <p class="work-card__summary">{entry.summary}</p>
+            <a class="work-card__cta" href={`/work/${entry.slug}`}>Read the case</a>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <style>
+    .work-intro {
+      max-width: 68ch;
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .work-intro h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.6rem);
+    }
+
+    .work-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .work-card {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      padding: 1.75rem;
+      background: var(--color-surface);
+      display: grid;
+      gap: 0.75rem;
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .work-card header h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .work-card header a {
+      color: inherit;
+    }
+
+    .work-card header a:hover,
+    .work-card header a:focus-visible {
+      text-decoration: underline;
+    }
+
+    .work-card__meta {
+      display: inline-flex;
+      gap: 0.6rem;
+      color: var(--color-muted);
+      font-size: 0.95rem;
+      margin: 0.35rem 0 0;
+    }
+
+    .work-card__summary {
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    .work-card__cta {
+      font-weight: 600;
+      color: var(--color-accent);
+      justify-self: flex-start;
+    }
+
+    .work-card__cta:hover,
+    .work-card__cta:focus-visible {
+      text-decoration: underline;
+    }
+
+    .work-card:hover,
+    .work-card:focus-within {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+    }
+  </style>
+</BaseLayout>
