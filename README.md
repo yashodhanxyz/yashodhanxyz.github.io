@@ -1,25 +1,10 @@
-# Yashodhan · Personal Site
+# yashodhanxyz.github.io
 
-Astro 5 project powering the marketing site, blog, and content portfolio for Yashodhan.
+Clean slate for the next iteration of the site. The repository currently hosts a minimal static page as a placeholder. Feel free to replace the contents with the new build when ready.
 
-## Quick start
+## Working locally
 
-```bash
-npm install
-npm run dev
-```
+1. Open `index.html` in your browser to view the placeholder page.
+2. Update or replace the HTML/CSS as you design the new site.
 
-## Scripts
-
-- `npm run dev` – start the local dev server
-- `npm run lint` – run ESLint across Astro, TypeScript, and MDX content
-- `npm run build` – generate the production build to `dist/`
-- `npm run preview` – serve the production build locally
-
-## Draft previews
-
-Set the environment variable `PUBLIC_PREVIEW_DRAFTS=true` (e.g. in Vercel preview deployments) to surface draft blog posts in listings and detail routes.
-
-## Deployment
-
-This project targets Vercel. See `vercel.json` for the production redirect (www → apex) and long-lived cache headers. Plausible analytics is loaded only in production builds.
+When you are ready to publish, push the changes to the `main` branch so GitHub Pages serves the updated content.

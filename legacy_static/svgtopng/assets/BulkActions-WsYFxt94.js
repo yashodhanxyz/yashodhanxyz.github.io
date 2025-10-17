@@ -1,6 +1,0 @@
-import{c as x,j as e}from"./index-CJcBHVqg.js";import{D as a}from"./download-Curg4jwr.js";/**
- * @license lucide-react v0.344.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */const o=x("Loader",[["line",{x1:"12",x2:"12",y1:"2",y2:"6",key:"gza1u7"}],["line",{x1:"12",x2:"12",y1:"18",y2:"22",key:"1qhbu9"}],["line",{x1:"4.93",x2:"7.76",y1:"4.93",y2:"7.76",key:"xae44r"}],["line",{x1:"16.24",x2:"19.07",y1:"16.24",y2:"19.07",key:"bxnmvf"}],["line",{x1:"2",x2:"6",y1:"12",y2:"12",key:"89khin"}],["line",{x1:"18",x2:"22",y1:"12",y2:"12",key:"pb8tfm"}],["line",{x1:"4.93",x2:"7.76",y1:"19.07",y2:"16.24",key:"1uxjnu"}],["line",{x1:"16.24",x2:"19.07",y1:"7.76",y2:"4.93",key:"6duxfx"}]]);function s({onBulkDownload:i,converting:l,filesCount:n}){return n===0?null:e.jsx("div",{className:"fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-lg rounded-full",children:e.jsxs("button",{onClick:i,disabled:l,className:"px-6 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center space-x-2 hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50",children:[l?e.jsx(o,{className:"w-5 h-5 animate-spin"}):e.jsx(a,{className:"w-5 h-5"}),e.jsxs("span",{children:["Download All (",n,")"]})]})})}export{s as BulkActions};
